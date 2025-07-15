@@ -1,2 +1,2 @@
-# vbrinza-unix-clis-2-rust
+# unix-clis-2-rust
 Popular Unix CLI's written in Rust

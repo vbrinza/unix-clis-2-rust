@@ -2,7 +2,7 @@ use anyhow::Result;
 use assert_cmd::Command;
 use predicates::prelude::*;
 use pretty_assertions::assert_eq;
-use rand::{distributions::Alphanumeric, Rng};
+use rand::{Rng, distributions::Alphanumeric};
 use std::{fs, path::Path};
 use sys_info::os_type;
 
@@ -45,7 +45,7 @@ fn dies_bad_pattern() -> Result<()> {
         .args(["*foo", FOX])
         .assert()
         .failure()
-        .stderr(predicate::str::contains(r#"Invalid pattern "*foo""#));
+        .stderr(predicate::str::contains(r#"Invalid pattern ""*foo""#));
     Ok(())
 }
 
@@ -64,9 +64,7 @@ fn warns_bad_file() -> Result<()> {
 // --------------------------------------------------
 fn run(args: &[&str], expected_file: &str) -> Result<()> {
     let windows_file = format!("{expected_file}.windows");
-    let expected_file = if os_type().unwrap() == "Windows"
-        && Path::new(&windows_file).is_file()
-    {
+    let expected_file = if os_type().unwrap() == "Windows" && Path::new(&windows_file).is_file() {
         &windows_file
     } else {
         expected_file
@@ -245,8 +243,7 @@ fn warns_dir_not_recursive() -> Result<()> {
 #[test]
 fn stdin() -> Result<()> {
     let input = fs::read_to_string(BUSTLE)?;
-    let expected =
-        fs::read_to_string("tests/expected/bustle.txt.the.capitalized")?;
+    let expected = fs::read_to_string("tests/expected/bustle.txt.the.capitalized")?;
 
     let output = Command::cargo_bin(PRG)?
         .arg("The")
@@ -270,8 +267,7 @@ fn stdin_insensitive_count() -> Result<()> {
         input += &fs::read_to_string(file)?;
     }
 
-    let expected_file =
-        "tests/expected/the.recursive.insensitive.count.stdin";
+    let expected_file = "tests/expected/the.recursive.insensitive.count.stdin";
     let expected = fs::read_to_string(expected_file)?;
 
     let output = Command::cargo_bin(PRG)?

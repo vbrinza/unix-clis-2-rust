@@ -40,15 +40,31 @@ fn run(args: Args) -> Result<()> {
         .map_err(|_| anyhow!(r#"Invalid pattern ""{}""#, args.pattern))?;
 
     let entries = find_files(&args.files, args.recursive);
+    let num_files = entries.len();
+    let print = |fname: &str, val: &str| {
+        if num_files > 1 {
+            print!("{fname}:{val}");
+        } else {
+            print!("{val}");
+        }
+    };
     for entry in entries {
         match entry {
             Err(e) => eprintln!("{e}"),
             Ok(filename) => match open(&filename) {
                 Err(e) => eprintln!("{filename}: {e}"),
-                Ok(file) => {
-                    let matches = find_lines(file, &pattern, args.invert);
-                    println!("Found {matches:?}");
-                }
+                Ok(file) => match find_lines(file, &pattern, args.invert) {
+                    Err(e) => eprintln!("{e}"),
+                    Ok(matches) => {
+                        if args.count {
+                            print(&filename, &format!("{}\n", matches.len()));
+                        } else {
+                            for line in &matches {
+                                print(&filename, line);
+                            }
+                        }
+                    }
+                },
             },
         }
     }

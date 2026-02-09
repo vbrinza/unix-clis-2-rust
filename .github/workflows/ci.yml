@@ -17,6 +17,7 @@ jobs:
       headr: ${{ steps.filter.outputs.headr }}
       uniqr: ${{ steps.filter.outputs.uniqr }}
       wcr: ${{ steps.filter.outputs.wcr }}
+      commr: ${{ steps.filter.outputs.commr }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -37,7 +38,8 @@ jobs:
               - 'uniqr/**'
             wcr:
               - 'wcr/**'
-
+            commr:
+              - 'commr/**'
   build:
     needs: detect-changes
     runs-on: ubuntu-latest
@@ -51,6 +53,7 @@ jobs:
           - headr
           - uniqr
           - wcr
+          - commr
     steps:
       - uses: actions/checkout@v4
         if: needs.detect-changes.outputs[matrix.project] == 'true'
